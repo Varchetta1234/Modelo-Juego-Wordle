@@ -1,0 +1,100 @@
+= Trabajo práctico 1
+
+== Segundo Semestre 2022
+ 
+*Integrantes*
+
+Mendez Agustina <agustina.996@hotmail.com>
+
+*Docentes*
+
+* Patricia Bagnes
+* Javier Marenco
+
+
+== Introducción
+
+El objetivo del trabajo práctico es implementar una aplicación para jugar a Wordle. El juego consiste en adivinar una palabra secreta de cinco letras que propone la aplicación. Al iniciar el juego, la aplicación selecciona aleatoriamente la palabra secreta de una lista de palabras, y el usuario debe adivinar la palabra secreta arriesgando palabras por turnos. En cada turno el usuario le informa al juego una palabra. Si la palabra que introdujo el usuario coincide con la palabra secreta, el usuario gana el juego. Si no, la aplicación le informa al usuario el “status” de cada letra de la palabra:
+
+* Si la letra no está en la palabra secreta, se marca en gris.
+* Si la letra está en la palabra secreta, pero no está en la misma posición que en la palabra que dio el usuario, se marca en amarillo.
+* Si la letra está en la palabra secreta y en la posición correcta, se marca en verde.
+  
+El usuario tiene seis intentos para descubrir la palabra secreta. Si luego de los seis intentos no lo consigue, pierde el juego.
+La aplicación cuenta con una interfaz visual donde se pueden observar cinco casilleros para completar la palabra y el botón “JUGAR” que, al ser presionado, nos indicara si acertamos o no la palabra secreta. No podemos oprimir el botón si los casilleros estan vacíos. Además, en los casilleros, solo podemos escribir letras.
+
+image::src/img1.jpg[]
+
+Podemos accionar el botón “JUGAR” oprimiendo la tecla enter o haciendo o click sobre el mismo. 
+
+image::src/img2.jpg[]
+
+Si la palabra introducida no es correcta, los casilleros se pintarán de verde, amarillo o gris, según corresponda. Tambien aparecerán en pantalla nuevos casilleros para intentar adivinar nuevamente. 
+Una vez completados todos los intentos o si adivinamos la palabra, el boton “JUGAR” queda desactivado y en la pantalla se mostrará alguno de los siguientes mensajes:
+
+image::src/img3.JPG[]
+
+En la clase Interfaz tenemos el método generarCasillerosLetras(int y) que recibe una posición y para crear los casilleros. A cada casillero lo llamamos: letra1, letra2, letra3, letra4 y, letra5. Cada uno de estos casilleros verifica que la tecla oprimida sea una letra:
+
+[source, java]
+----
+(int) e.getKeyChar() < 123 && (int) e.getKeyChar() > 96 ||
+(int) e.getKeyChar() < 91 && (int) e.getKeyChar() > 64)
+----
+
+Cuando el carácter ingresado es una letra, el casillero deja de ser editable y pasamos al siguiente:
+
+[source, java]
+----
+letra3.requestFocus();
+letra2.setEnabled(false);
+----
+
+Solo podemos jugar una vez que los cinco casilleros tengan una letra. El botón JUGAR llama al método verificar(String letra1, String letra2, String letra3, String letra4, String letra5). Este método se encuentra en la clase Aplicación y es el encargado de comprobar si acertamos las letras y devolver una lista con los colores correspondientes a cada casillero: verde para una letra en posición correcta, amarillo para una letra que pertenece a la palabra, pero no está en la posición correcta o gris si no está en la palabra.
+La palabra secreta es elegida al azar de una lista de palabras con el método buscarPalabra(). La lista de palabras se genera a partir de un txt con la clase Diccionario. Esta forma de manejo de archivos aprendimos a utilizarla en Python y, al resultar práctica, se decidió investigar como trasladarla a Java.
+
+[source, java]
+----
+public class Diccionario {
+	private String rutaTexto;
+	public Diccionario() {
+		rutaTexto = System.getProperty("user.dir") + "\\src\\wordle\\Palabras.txt";
+	}
+	public String[] obtenerPalabras() {
+		List<String> palabras = new ArrayList<>();
+		File file = new File(rutaTexto);
+		BufferedReader br;
+		try {
+			br = new BufferedReader(new FileReader(file));
+			String st;
+		    while ((st = br.readLine()) != null) {
+		    	palabras.add(st);
+		    }
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return palabras.stream().toArray(String[]::new);
+	}
+}	
+----
+
+En un primer momento, el método verificar iniciaba con cada letra “pintada” de gris y comprobaba casillero por casillero recorriendo toda la palabra secreta cada vez, cambiando a verde o amarillo según correspondía:
+
+[source, java]
+----
+ColorLetra[] valorLetraList = { ColorLetra.GRIS, ColorLetra.GRIS, ColorLetra.GRIS, ColorLetra.GRIS, ColorLetra.GRIS };
+for (int i = 0; i < palabra.length(); i++) {
+			if (palabra.charAt(0) == letra1.charAt(0)) {
+				valorLetraList[0] = ColorLetra.VERDE;
+			} else if (letra1.charAt(0) == palabra.charAt(i) && i != 0) {
+				valorLetraList[0] = ColorLetra.AMARILLO;
+			}
+		}
+----
+
+Esto hacia que el método sea muy extenso y desprolijo. Además, no tenía en cuenta la cantidad de repetidas de la palabra y podía pintar de amarillo más letras de lo correcto. Por ejemplo: si la palabra secreta es CASAS y la palabra ingresada por el usuario es AMASA, el método hubiese pintado las 3 A de amarillo.
+Esto se solucionó teniendo la palabra secreta en una variable auxiliar. El método revisa comparando con la palabra auxiliar cuales letras son verdes y reemplaza la posición de la letra en la palabra auxiliar por un espacio. Luego de marcar todas las verdes, pasamos a las amarillas. Siguiendo con el ejemplo anterior: cuando verifico la primera letra A, la palabra auxiliar quedaría C_SAS, cuando verifique la segunda A, la palabra auxiliar quedaría C_S_S. Al llegar a la última A no habría Aes en la palabra auxiliar, por lo cual quedaría pintada de gris.
+Como se limitaron las acciones que puede realizar el usuario, bloqueando botones y limitando los caracteres ingresados por teclado, decidimos hacer un test que compruebe el funcionamiento del metodo verificar.
+
+image::src/img4.jpg[]
+
