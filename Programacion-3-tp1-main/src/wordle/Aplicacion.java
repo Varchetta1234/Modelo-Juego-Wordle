@@ -1,5 +1,5 @@
 package wordle;
-//comentario numero 2
+
 import java.util.Random;
 
 

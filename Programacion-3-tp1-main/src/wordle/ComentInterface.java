@@ -183,8 +183,7 @@ public class Interfaz {
 			@Override
 			public void keyTyped(KeyEvent e) {
 
-				if ((int) e.getKeyChar() < 123 && (int) e.getKeyChar() > 96
-						|| (int) e.getKeyChar() < 91 && (int) e.getKeyChar() > 64) {
+				if (letrasValidas(e)) {
 					letra1.setText(String.valueOf(e.getKeyChar()).toUpperCase());
 					letra2.requestFocus(); // Método fundamental: Transfiere automáticamente el cursor a la siguiente casilla (letra2).
 					letra1.setEnabled(false); // Método fundamental: Bloquea esta casilla para que no se pueda borrar o cambiar la letra.
@@ -208,8 +207,7 @@ public class Interfaz {
 			@Override
 			public void keyTyped(KeyEvent e) {
 
-				if ((int) e.getKeyChar() < 123 && (int) e.getKeyChar() > 96
-						|| (int) e.getKeyChar() < 91 && (int) e.getKeyChar() > 64) {
+				if (letrasValidas(e)) {
 					letra2.setText(String.valueOf(e.getKeyChar()).toUpperCase());
 					letra3.requestFocus(); // Método fundamental: Pasa el foco al casillero letra3.
 					letra2.setEnabled(false); // Método fundamental: Bloquea el componente actual.
@@ -232,8 +230,7 @@ public class Interfaz {
 			@Override
 			public void keyTyped(KeyEvent e) {
 
-				if ((int) e.getKeyChar() < 123 && (int) e.getKeyChar() > 96
-						|| (int) e.getKeyChar() < 91 && (int) e.getKeyChar() > 64) {
+				if (letrasValidas(e)) {
 					letra3.setText(String.valueOf(e.getKeyChar()).toUpperCase());
 					letra4.requestFocus(); // Método fundamental: Pasa el foco al casillero letra4.
 					letra3.setEnabled(false); // Método fundamental: Bloquea el componente actual.
@@ -258,8 +255,7 @@ public class Interfaz {
 			@Override
 			public void keyTyped(KeyEvent e) {
 
-				if ((int) e.getKeyChar() < 123 && (int) e.getKeyChar() > 96
-						|| (int) e.getKeyChar() < 91 && (int) e.getKeyChar() > 64) {
+				if (letrasValidas(e)) {
 					letra4.setText(String.valueOf(e.getKeyChar()).toUpperCase());
 					letra5.requestFocus(); // Método fundamental: Pasa el foco al último casillero (letra5).
 					letra4.setEnabled(false); // Método fundamental: Bloquea el componente actual.
@@ -282,8 +278,7 @@ public class Interfaz {
 			@Override
 			public void keyTyped(KeyEvent e) {
 
-				if ((int) e.getKeyChar() < 123 && (int) e.getKeyChar() > 96
-						|| (int) e.getKeyChar() < 91 && (int) e.getKeyChar() > 64) {
+				if (letrasValidas(e)) {
 					letra5.setText(String.valueOf(e.getKeyChar()).toUpperCase());
 					// Ya no hay requestFocus() aquí porque es la última letra de la fila. El usuario ahora debe apretar "JUGAR" o Enter.
 					letra5.setEnabled(false); // Método fundamental: Bloquea el último componente.
@@ -301,5 +296,10 @@ public class Interfaz {
 		
 		frame.revalidate(); // Método fundamental: Avisa a Swing que la nueva fila de JTextFields fue agregada a la estructura.
 		frame.repaint(); // Método fundamental: Pinta los nuevos 5 cuadraditos en pantalla.
+	}
+
+	private boolean letrasValidas(KeyEvent e) {
+		return (int) e.getKeyChar() < 123 && (int) e.getKeyChar() > 96
+				|| (int) e.getKeyChar() < 91 && (int) e.getKeyChar() > 64;
 	}
 }
